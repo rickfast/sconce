@@ -1,24 +1,25 @@
 use candle_core::{Module, Shape, Tensor};
-use candle_nn::init::DEFAULT_KAIMING_UNIFORM;
+use candle_nn::init::{DEFAULT_KAIMING_UNIFORM, ZERO};
 use candle_nn::{Activation, Init, VarBuilder};
 
 use crate::builder_field;
 use crate::error::Result;
 use crate::layers::{Layer, LayerBuilder};
-use crate::regularizer::Regularizers;
+use crate::regularizer::Regularizer;
 
-struct Dense {
+#[derive(Clone)]
+pub struct Dense {
     units: usize,
     activation: Option<Activation>,
     use_bias: bool,
     kernel_initializer: Option<Init>,
     bias_initializer: Option<Init>,
-    activity_regularizer: Option<Regularizers>,
-    bias_regularizer: Option<Regularizers>,
+    activity_regularizer: Option<Regularizer>,
+    bias_regularizer: Option<Regularizer>,
 }
 
 impl Dense {
-    fn new(units: usize) -> Self {
+    pub fn new(units: usize) -> Self {
         Self {
             units,
             activation: None,
@@ -34,28 +35,33 @@ impl Dense {
     builder_field!(use_bias, bool);
     builder_field!(kernel_initializer, Option<Init>);
     builder_field!(bias_initializer, Option<Init>);
-    builder_field!(activity_regularizer, Option<Regularizers>);
-    builder_field!(bias_regularizer, Option<Regularizers>);
+    builder_field!(activity_regularizer, Option<Regularizer>);
+    builder_field!(bias_regularizer, Option<Regularizer>);
 }
 
-impl LayerBuilder<DenseLayer> for Dense {
-    fn build(&self, input_shape: &Shape, vs: &VarBuilder) -> Result<DenseLayer> {
+impl LayerBuilder for Dense {
+    fn build(&self, input_shape: &Shape, vs: &VarBuilder) -> Result<Box<dyn Layer>> {
         let input_dim = input_shape.dims().last().unwrap();
-        let kernel =
-            vs.get_with_hints(&[*input_dim, self.units], "kernel", DEFAULT_KAIMING_UNIFORM)?;
+        let kernel = vs.get_with_hints(
+            &[*input_dim, self.units],
+            "kernel",
+            self.kernel_initializer.unwrap_or(ZERO),
+        )?;
         let bias = match self.bias_initializer {
-            Some(init) => {
-                Some(vs.get_with_hints(&[self.units], "bias", DEFAULT_KAIMING_UNIFORM)?)
-            }
+            Some(_init) => Some(vs.get_with_hints(
+                &[self.units],
+                "bias",
+                self.bias_initializer.unwrap_or(DEFAULT_KAIMING_UNIFORM),
+            )?),
             None => None,
         };
 
-        Ok(DenseLayer {
+        Ok(Box::new(DenseLayer {
             units: self.units,
             activation: self.activation,
             kernel,
             bias,
-        })
+        }))
     }
 }
 

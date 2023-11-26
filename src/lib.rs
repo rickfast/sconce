@@ -1,15 +1,15 @@
 mod error;
 mod layers;
+mod models;
 mod regularizer;
 mod util;
 
 use crate::layers::Layer;
 use crate::util::ModelError;
-use crate::util::ModelError::{LayerAccess, LayerIndex, LayerNotFound};
-use candle_core::{DType, Shape, Tensor};
-use derive_builder::Builder;
+use crate::util::ModelError::LayerAccess;
+use candle_core::Tensor;
+
 use std::collections::HashMap;
-use thiserror::Error;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right
@@ -53,8 +53,8 @@ pub struct Sequential<'a> {
 impl Model for Sequential<'_> {
     fn call(
         &self,
-        inputs: HashMap<String, Tensor>,
-        parameters: HashMap<String, String>,
+        _inputs: HashMap<String, Tensor>,
+        _parameters: HashMap<String, String>,
     ) -> HashMap<String, Tensor> {
         todo!()
     }

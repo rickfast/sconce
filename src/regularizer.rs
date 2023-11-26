@@ -1,24 +1,19 @@
 use crate::error::Result;
-use candle_core::scalar::TensorOrScalar;
-use candle_core::{Device, Tensor};
-use std::ops::Div;
 
-trait Regularizer {
-    fn call(&self, xs: &Tensor) -> Result<Tensor>;
-}
+use candle_core::{Module, Tensor};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub enum Regularizers {
+pub enum Regularizer {
     L1L2Default(),
     L1L2(f32, f32),
     L1(f32),
     L2(f32),
 }
 
-impl Regularizer for Regularizers {
-    fn call(&self, xs: &Tensor) -> Result<Tensor> {
+impl Module for Regularizer {
+    fn forward(&self, xs: &Tensor) -> Result<Tensor> {
         match self {
-            Self::L1L2Default() => Self::L1L2(0.01, 0.01).call(xs),
+            Self::L1L2Default() => Self::L1L2(0.01, 0.01).forward(xs),
             &Self::L1L2(l1, l2) => {
                 let mut regularization = Tensor::zeros(&[1], xs.dtype(), xs.device())?;
                 let l1_t = Tensor::try_from(l1)?;
@@ -49,7 +44,7 @@ impl Regularizer for Regularizers {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::regularizer::Regularizers::L1;
+    use crate::regularizer::Regularizer::L1;
     use candle_core::Device;
 
     #[test]

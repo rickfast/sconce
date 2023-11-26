@@ -1,14 +1,14 @@
 use crate::error::Result;
-use candle_core::{DType, Device, Module, Shape, Tensor, Var, WithDType};
-use candle_nn::init::{DEFAULT_KAIMING_UNIFORM, ZERO};
-use candle_nn::{Init, VarBuilder};
+use candle_core::{Module, Shape};
 
-mod core;
+use candle_nn::VarBuilder;
 
-pub trait Layer: candle_core::Module {
+pub mod core;
+
+pub trait Layer: Module {
     fn name(&self) -> String;
 }
 
-pub trait LayerBuilder<L: Layer> {
-    fn build(&self, input_shape: &Shape, vs: &VarBuilder) -> Result<L>;
+pub trait LayerBuilder {
+    fn build(&self, input_shape: &Shape, vs: &VarBuilder) -> Result<Box<dyn Layer>>;
 }
