@@ -1,5 +1,5 @@
 use crate::layers::core::dense::Dense;
-use crate::layers::{Layer, LayerBuilder};
+use crate::layers::{LayerBuilder};
 use candle_nn::init::ZERO;
 
 struct Sequential {
@@ -18,7 +18,7 @@ impl Sequential {
 }
 
 fn do_it() {
-    let mut sequential = Sequential::new()
+    let _sequential = Sequential::new()
         .add_layer(Dense::new(2).kernel_initializer(Some(ZERO)));
 
 }

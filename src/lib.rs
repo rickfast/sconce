@@ -3,6 +3,7 @@ mod layers;
 mod models;
 mod regularizer;
 mod util;
+mod loss;
 
 use crate::layers::Layer;
 use crate::util::ModelError;

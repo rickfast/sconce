@@ -1,4 +1,4 @@
-use std::ops::Deref;
+
 use crate::builder_field;
 use crate::layers::{Layer, LayerBuilder};
 use candle_core::{DType, Module, Shape, Tensor};
@@ -24,7 +24,7 @@ impl Input {
 }
 
 impl LayerBuilder for Input {
-    fn build(&self, input_shape: &Shape, vs: &VarBuilder) -> crate::error::Result<Box<dyn Layer>> {
+    fn build(&self, input_shape: &Shape, _vs: &VarBuilder) -> crate::error::Result<Box<dyn Layer>> {
         Ok(
             Box::new(InputLayer {
                 shape: input_shape.clone(),
