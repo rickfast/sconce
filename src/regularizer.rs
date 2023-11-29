@@ -11,7 +11,7 @@ pub enum Regularizer {
 }
 
 impl Module for Regularizer {
-    fn forward(&self, xs: &Tensor) -> Result<Tensor> {
+    fn forward(&self, xs: &Tensor) -> candle_core::Result<Tensor> {
         match self {
             Self::L1L2Default() => Self::L1L2(0.01, 0.01).forward(xs),
             &Self::L1L2(l1, l2) => {

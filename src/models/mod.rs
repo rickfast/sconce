@@ -6,8 +6,7 @@ use candle_nn::VarMap;
 
 mod sequential;
 
-trait ModelBuilder {
-    type M: Model;
+pub trait ModelBuilder {
     fn compile(
         &self,
         varmap: &VarMap,
@@ -17,7 +16,7 @@ trait ModelBuilder {
     ) -> Result<Box<dyn Model>>;
 }
 
-trait Model: Module {
+pub trait Model: Module {
     fn variables(&self) -> VarMap;
 
     fn loss(&self) -> LossFn;
@@ -26,6 +25,7 @@ trait Model: Module {
 
     fn fit(&self, x: &Tensor, y: &Tensor, epochs: usize) -> Result<TrainOutput> {
         let mut optimizer = self.optimizer()?;
+        let mut sum_loss = 0_f32;
 
         for step in 0..epochs {
             let ys = self.forward(&x)?;
@@ -33,7 +33,7 @@ trait Model: Module {
 
             optimizer.backward_step(&loss)?;
 
-            println!("{step} {}", loss.to_vec0::<f32>()?);
+            sum_loss += loss.to_vec0::<f32>()?;
         }
 
         todo!()

@@ -5,7 +5,7 @@ use candle_nn::optim::{AdamW as AdamWInternal, SGD as SGDInternal};
 use candle_nn::{Optimizer as OptimizerInternal, ParamsAdamW};
 
 pub trait OptimizerBuilder {
-    fn build(&self, vars: Vec<Var>) -> Result<Box<dyn Optimizer>>;
+    fn build(&self, vars: Vec<Var>) -> candle_core::Result<Box<dyn Optimizer>>;
 }
 
 pub enum Optimizers {
@@ -14,7 +14,7 @@ pub enum Optimizers {
 }
 
 impl OptimizerBuilder for Optimizers {
-    fn build(&self, vars: Vec<Var>) -> Result<Box<dyn Optimizer>> {
+    fn build(&self, vars: Vec<Var>) -> candle_core::Result<Box<dyn Optimizer>> {
         let result = match self {
             Self::Sgd(learning_rate) => {
                 Box::new(Sgd::new(vars, learning_rate.clone())?) as Box<dyn Optimizer>
