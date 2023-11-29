@@ -7,6 +7,7 @@ use crate::optimizer::{Optimizer, OptimizerBuilder, Optimizers};
 
 use candle_core::{Device, Module, Tensor};
 use candle_nn::init::ZERO;
+use candle_nn::loss::nll;
 use candle_nn::VarMap;
 
 struct Sequential {
@@ -93,6 +94,18 @@ impl Model for SequentialModel {
     }
 }
 
-fn do_it() {
-    let _model = Sequential::new().add_layer(Dense::new(2).kernel_initializer(Some(ZERO)));
+fn do_it() -> Result<()> {
+    let device = &Device::Cpu;
+    let variables = VarMap::new();
+    let model = Sequential::new()
+        .add_layer(Dense::new(2).kernel_initializer(Some(ZERO)))
+        .compile(&variables, &Device::Cpu, nll, Optimizers::AdamWDefault)?;
+    let x = &Tensor::new(&[1.], &device)?;
+    let y = &Tensor::new(&[1.], &device)?;
+
+    let output = model.fit(x, y, 10)?;
+
+    println!("Loss: {}", output.loss);
+
+    Ok(())
 }

@@ -9,10 +9,10 @@ mod sequential;
 pub trait ModelBuilder {
     fn compile(
         &self,
-        varmap: &VarMap,
+        variables: &VarMap,
         device: &Device,
         loss_fn: LossFn,
-        optimizers: Optimizers,
+        optimizer: Optimizers,
     ) -> Result<Box<dyn Model>>;
 }
 
@@ -36,11 +36,10 @@ pub trait Model: Module {
             sum_loss += loss.to_vec0::<f32>()?;
         }
 
-        todo!()
+        Ok(TrainOutput { loss: sum_loss })
     }
 }
 
 pub struct TrainOutput {
-    y: Tensor,
     loss: f32,
 }

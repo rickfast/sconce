@@ -9,6 +9,7 @@ pub trait OptimizerBuilder {
 }
 
 pub enum Optimizers {
+    AdamWDefault,
     AdamW(ParamsAdamW),
     Sgd(f64),
 }
@@ -16,6 +17,9 @@ pub enum Optimizers {
 impl OptimizerBuilder for Optimizers {
     fn build(&self, vars: Vec<Var>) -> candle_core::Result<Box<dyn Optimizer>> {
         let result = match self {
+            Self::AdamWDefault => {
+                Box::new(AdamW::new(vars, ParamsAdamW::default())?) as Box<dyn Optimizer>
+            }
             Self::Sgd(learning_rate) => {
                 Box::new(Sgd::new(vars, learning_rate.clone())?) as Box<dyn Optimizer>
             }
