@@ -1,14 +1,13 @@
-use std::cell::RefCell;
-use std::rc::Rc;
+use crate::error::Result;
 use crate::layers::dense::Dense;
 use crate::layers::{Layer, LayerBuilder};
-use crate::models::{Model, ModelBuilder};
-use crate::error::Result;
-use candle_core::{Device, DType, Module, Shape, Tensor, Var};
-use candle_nn::init::ZERO;
-use candle_nn::{VarMap};
 use crate::loss::LossFn;
+use crate::models::{Model, ModelBuilder};
 use crate::optimizer::{Optimizer, OptimizerBuilder, Optimizers};
+use anyhow::Error;
+use candle_core::{Device, Module, Shape, Tensor};
+use candle_nn::init::ZERO;
+use candle_nn::VarMap;
 
 struct Sequential<'a> {
     layers: Vec<Box<&'a mut dyn LayerBuilder>>,
@@ -33,16 +32,31 @@ impl ModelBuilder for Sequential<'_> {
         varmap: &VarMap,
         device: &Device,
         loss_fn: LossFn,
-        optimizers: Optimizers
+        optimizers: Optimizers,
     ) -> Result<Box<dyn Model>> {
-        let input_shape = Shape::from_dims(&[1, 1]);
+        let input_shape = self
+            .layers
+            .iter()
+            .find(|layer| layer.input_shape().is_some())
+            .ok_or_else(Error::msg("no input shape defined"))?
+            .input_shape()
+            .unwrap();
         let layers: Vec<Box<dyn Layer>> = self
             .layers
             .iter()
-            .map(|layer| layer.build(&input_shape.clone().into(), varmap, device).unwrap())
+            .map(|layer| {
+                layer
+                    .build(&input_shape.clone().into(), varmap, device)
+                    .unwrap()
+            })
             .collect();
 
-        Ok(Box::new(SequentialModel { layers, variables: varmap.clone(), loss: loss_fn, optimizers }))
+        Ok(Box::new(SequentialModel {
+            layers,
+            variables: varmap.clone(),
+            loss: loss_fn,
+            optimizers,
+        }))
     }
 }
 
@@ -50,7 +64,7 @@ struct SequentialModel {
     layers: Vec<Box<dyn Layer>>,
     variables: VarMap,
     loss: LossFn,
-    optimizers: Optimizers
+    optimizers: Optimizers,
 }
 
 impl Module for SequentialModel {
@@ -78,7 +92,5 @@ impl Model for SequentialModel {
 }
 
 fn do_it() {
-    let _sequential = Sequential::new()
-        .add_layer(Dense::new(2)
-            .kernel_initializer(Some(ZERO)));
+    let _sequential = Sequential::new().add_layer(Dense::new(2).kernel_initializer(Some(ZERO)));
 }

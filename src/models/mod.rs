@@ -1,10 +1,7 @@
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::borrow::BorrowMut;
 use crate::error::Result;
 use crate::loss::LossFn;
-use crate::optimizer::{Optimizer, OptimizerBuilder, Optimizers};
-use candle_core::{Device, Module, Tensor, Var};
+use crate::optimizer::{Optimizer, Optimizers};
+use candle_core::{Device, Module, Tensor};
 use candle_nn::VarMap;
 
 mod sequential;
@@ -16,7 +13,7 @@ trait ModelBuilder {
         varmap: &VarMap,
         device: &Device,
         loss_fn: LossFn,
-        optimizers: Optimizers
+        optimizers: Optimizers,
     ) -> Result<Box<dyn Model>>;
 }
 

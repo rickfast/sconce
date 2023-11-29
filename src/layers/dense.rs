@@ -1,4 +1,4 @@
-use candle_core::{Device, DType, Module, Shape, Tensor, Var};
+use candle_core::{DType, Device, Module, Shape, Tensor};
 use candle_nn::init::{DEFAULT_KAIMING_UNIFORM, ZERO};
 use candle_nn::{Activation, Init, VarBuilder, VarMap};
 
@@ -40,7 +40,12 @@ impl Dense {
 }
 
 impl LayerBuilder for Dense {
-    fn build(&self, input_shape: &Shape, varmap: &VarMap, device: &Device) -> Result<Box<dyn Layer>> {
+    fn build(
+        &self,
+        input_shape: &Shape,
+        varmap: &VarMap,
+        device: &Device,
+    ) -> Result<Box<dyn Layer>> {
         let input_dim = input_shape.dims().last().unwrap();
         let vs = VarBuilder::from_varmap(varmap, DType::F32, device);
         let kernel = vs.get_with_hints(

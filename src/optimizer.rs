@@ -16,8 +16,12 @@ pub enum Optimizers {
 impl OptimizerBuilder for Optimizers {
     fn build(&self, vars: Vec<Var>) -> Result<Box<dyn Optimizer>> {
         let result = match self {
-            Self::Sgd(learning_rate) => Box::new(Sgd::new(vars, learning_rate.clone())?) as Box<dyn Optimizer>,
-            Self::AdamW(params) => Box::new(AdamW::new(vars, params.clone())?) as Box<dyn Optimizer>,
+            Self::Sgd(learning_rate) => {
+                Box::new(Sgd::new(vars, learning_rate.clone())?) as Box<dyn Optimizer>
+            }
+            Self::AdamW(params) => {
+                Box::new(AdamW::new(vars, params.clone())?) as Box<dyn Optimizer>
+            }
         };
 
         Ok(result)

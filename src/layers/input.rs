@@ -1,7 +1,7 @@
 use crate::builder_field;
 use crate::layers::{Layer, LayerBuilder};
-use candle_core::{Device, DType, Module, Shape, Tensor, Var};
-use candle_nn::{VarBuilder, VarMap};
+use candle_core::{DType, Device, Module, Shape, Tensor};
+use candle_nn::VarMap;
 
 #[derive(Clone)]
 pub struct Input {
@@ -23,12 +23,21 @@ impl Input {
 }
 
 impl LayerBuilder for Input {
-    fn build(&self, input_shape: &Shape, _: &VarMap, _: &Device) -> crate::error::Result<Box<dyn Layer>> {
+    fn build(
+        &self,
+        input_shape: &Shape,
+        _: &VarMap,
+        _: &Device,
+    ) -> crate::error::Result<Box<dyn Layer>> {
         Ok(Box::new(InputLayer {
             shape: input_shape.clone(),
             batch_size: self.batch_size,
             dtype: self.dtype,
         }))
+    }
+
+    fn input_shape(&self) -> Option<Shape> {
+        Some(self.shape.clone())
     }
 }
 
