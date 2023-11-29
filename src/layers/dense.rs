@@ -1,6 +1,6 @@
-use candle_core::{Module, Shape, Tensor};
+use candle_core::{Device, DType, Module, Shape, Tensor, Var};
 use candle_nn::init::{DEFAULT_KAIMING_UNIFORM, ZERO};
-use candle_nn::{Activation, Init, VarBuilder};
+use candle_nn::{Activation, Init, VarBuilder, VarMap};
 
 use crate::builder_field;
 use crate::error::Result;
@@ -40,8 +40,9 @@ impl Dense {
 }
 
 impl LayerBuilder for Dense {
-    fn build(&self, input_shape: &Shape, vs: &VarBuilder) -> Result<Box<dyn Layer>> {
+    fn build(&self, input_shape: &Shape, varmap: &VarMap, device: &Device) -> Result<Box<dyn Layer>> {
         let input_dim = input_shape.dims().last().unwrap();
+        let vs = VarBuilder::from_varmap(varmap, DType::F32, device);
         let kernel = vs.get_with_hints(
             &[*input_dim, self.units],
             "kernel",
