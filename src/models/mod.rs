@@ -27,7 +27,7 @@ pub trait Model: Module {
         let mut optimizer = self.optimizer()?;
         let mut sum_loss = 0_f32;
 
-        for step in 0..epochs {
+        for _step in 0..epochs {
             let ys = self.forward(&x)?;
             let loss = ys.sub(&y)?.sqr()?.sum_all()?;
 
