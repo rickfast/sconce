@@ -78,7 +78,7 @@ impl LayerConfiguration for Dense {
 }
 
 fn dense(units: usize) -> Dense {
-    Dense::new(units)
+    Dense::new(units).build()
 }
 
 pub(crate) struct DenseLayer {

@@ -5,6 +5,7 @@ use candle_nn::VarMap;
 
 pub mod dense;
 pub mod input;
+pub mod activation;
 
 pub trait Layer: Module {
     fn name(&self) -> String;
