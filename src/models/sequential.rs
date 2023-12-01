@@ -1,6 +1,6 @@
 use crate::error::Result;
 use crate::layers::dense::Dense;
-use crate::layers::{Layer, LayerBuilder};
+use crate::layers::{Layer, LayerConfiguration, LayerBuilder};
 use crate::loss::LossFn;
 use crate::models::{Model, ModelBuilder};
 use crate::optimizer::{Optimizer, OptimizerBuilder, Optimizers};
@@ -11,11 +11,11 @@ use candle_nn::loss::nll;
 use candle_nn::VarMap;
 
 struct Sequential {
-    layers: Vec<Box<dyn LayerBuilder>>,
+    layers: Vec<Box<dyn LayerConfiguration>>,
 }
 
 pub(super) enum LayerOrModel {
-    Layer(Box<dyn LayerBuilder>),
+    Layer(Box<dyn LayerConfiguration>),
     Model(Box<dyn ModelBuilder>),
 }
 
@@ -23,9 +23,9 @@ impl<'a> Sequential {
     fn new() -> Self {
         Sequential { layers: vec![] }
     }
-    fn add_layer<L: LayerBuilder + Clone + 'a + 'static>(
+    fn add_layer<L: LayerConfiguration + Clone + 'a + 'static>(
         &'a mut self,
-        layer: &'a mut L,
+        layer: &'a L,
     ) -> &'a mut Self {
         self.layers.push(Box::new(layer.clone()));
 
@@ -51,7 +51,7 @@ impl ModelBuilder for Sequential {
         let layers: Vec<Box<dyn Layer>> = self
             .layers
             .iter()
-            .map(|layer| layer.build(&input_shape, variables, device).unwrap())
+            .map(|layer| layer.compile(&input_shape, variables, device).unwrap())
             .collect();
 
         Ok(Box::new(SequentialModel {
@@ -98,7 +98,7 @@ fn do_it() -> Result<()> {
     let device = &Device::Cpu;
     let variables = VarMap::new();
     let model = Sequential::new()
-        .add_layer(Dense::new(2).kernel_initializer(Some(ZERO)))
+        .add_layer(&Dense::new(2).kernel_initializer(Some(ZERO)).build())
         .compile(&variables, &Device::Cpu, nll, Optimizers::AdamWDefault)?;
     let x = &Tensor::new(&[1.], &device)?;
     let y = &Tensor::new(&[1.], &device)?;

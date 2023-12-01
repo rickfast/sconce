@@ -1,5 +1,5 @@
 use crate::builder_field;
-use crate::layers::{Layer, LayerBuilder};
+use crate::layers::{Layer, LayerBuilder, LayerConfiguration};
 use candle_core::{DType, Device, Module, Shape, Tensor};
 use candle_nn::VarMap;
 
@@ -23,7 +23,13 @@ impl Input {
 }
 
 impl LayerBuilder for Input {
-    fn build(
+    fn build(&mut self) -> Input {
+        self.clone()
+    }
+}
+
+impl LayerConfiguration for Input {
+    fn compile(
         &self,
         input_shape: &Shape,
         _: &VarMap,

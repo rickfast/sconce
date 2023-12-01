@@ -4,7 +4,7 @@ use candle_nn::{Activation, Init, VarBuilder, VarMap};
 
 use crate::builder_field;
 use crate::error::Result;
-use crate::layers::{Layer, LayerBuilder};
+use crate::layers::{Layer, LayerBuilder, LayerConfiguration};
 use crate::regularizer::Regularizer;
 
 #[derive(Clone)]
@@ -40,7 +40,13 @@ impl Dense {
 }
 
 impl LayerBuilder for Dense {
-    fn build(
+    fn build(&mut self) -> Dense {
+        self.clone()
+    }
+}
+
+impl LayerConfiguration for Dense {
+    fn compile(
         &self,
         input_shape: &Shape,
         varmap: &VarMap,
