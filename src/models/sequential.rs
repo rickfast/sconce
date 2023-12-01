@@ -94,7 +94,7 @@ impl Model for SequentialModel {
     }
 }
 
-fn do_it() -> Result<()> {
+fn train_example() -> Result<()> {
     let device = &Device::Cpu;
     let variables = VarMap::new();
     let model = Sequential::new()
