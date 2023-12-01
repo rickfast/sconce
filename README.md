@@ -7,7 +7,7 @@ fn train_example() -> Result<()> {
     let device = &Device::Cpu;
     let variables = VarMap::new();
     let model = Sequential::new()
-        .add_layer(&Dense::new(2).kernel_initializer(Some(ZERO)).build())
+        .add_layer(&Dense::new(2).kernel_initializer(ZERO).build())
         .add_layer(&Activation::new(Relu).build())
         .compile(&variables, &Device::Cpu, nll, Optimizers::AdamWDefault)?;
     let x = &Tensor::new(&[1.], &device)?;

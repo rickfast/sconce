@@ -1,8 +1,12 @@
 use crate::builder_field;
+use crate::builder_option_field;
 use crate::layers::{Layer, LayerBuilder, LayerConfiguration};
 use candle_core::{DType, Device, Module, Shape, Tensor};
 use candle_nn::VarMap;
 
+fn input(shape: Shape, dtype: DType) -> Input {
+    Input::new(shape, dtype).build()
+}
 #[derive(Clone)]
 pub struct Input {
     shape: Shape,
@@ -11,15 +15,15 @@ pub struct Input {
 }
 
 impl Input {
-    fn new(shape: Shape, dtype: DType) -> crate::error::Result<Self> {
-        Ok(Self {
+    fn new(shape: Shape, dtype: DType) -> Self {
+        Self {
             shape,
             batch_size: None,
             dtype,
-        })
+        }
     }
 
-    builder_field!(batch_size, Option<usize>);
+    builder_option_field!(batch_size, usize);
 }
 
 impl LayerBuilder for Input {

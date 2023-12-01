@@ -3,6 +3,7 @@ use candle_nn::init::{DEFAULT_KAIMING_UNIFORM, ZERO};
 use candle_nn::{Activation, Init, VarBuilder, VarMap};
 
 use crate::builder_field;
+use crate::builder_option_field;
 use crate::error::Result;
 use crate::layers::{Layer, LayerBuilder, LayerConfiguration};
 use crate::regularizer::Regularizer;
@@ -31,12 +32,12 @@ impl Dense {
         }
     }
 
-    builder_field!(activation, Option<Activation>);
+    builder_option_field!(activation, Activation);
     builder_field!(use_bias, bool);
-    builder_field!(kernel_initializer, Option<Init>);
-    builder_field!(bias_initializer, Option<Init>);
-    builder_field!(activity_regularizer, Option<Regularizer>);
-    builder_field!(bias_regularizer, Option<Regularizer>);
+    builder_option_field!(kernel_initializer, Init);
+    builder_option_field!(bias_initializer, Init);
+    builder_option_field!(activity_regularizer, Regularizer);
+    builder_option_field!(bias_regularizer, Regularizer);
 }
 
 impl LayerBuilder for Dense {

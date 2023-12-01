@@ -3,9 +3,9 @@ use candle_core::{Device, Module, Shape};
 
 use candle_nn::VarMap;
 
+pub mod activation;
 pub mod dense;
 pub mod input;
-pub mod activation;
 
 pub trait Layer: Module {
     fn name(&self) -> String;

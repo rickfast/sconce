@@ -1,17 +1,19 @@
+use crate::layers::{Layer, LayerBuilder, LayerConfiguration};
 use candle_core::{Device, Module, Shape, Tensor};
 use candle_nn::VarMap;
-use crate::layers::{Layer, LayerBuilder, LayerConfiguration};
+
+fn activation(activation: candle_nn::Activation) -> Activation {
+    Activation::new(activation).build()
+}
 
 #[derive(Clone)]
 pub struct Activation {
-    activation: candle_nn::Activation
+    activation: candle_nn::Activation,
 }
 
 impl Activation {
     pub fn new(activation: candle_nn::Activation) -> Self {
-        Activation {
-            activation
-        }
+        Activation { activation }
     }
 }
 
@@ -22,7 +24,12 @@ impl LayerBuilder for Activation {
 }
 
 impl LayerConfiguration for Activation {
-    fn compile(&self, input_shape: &Shape, variables: &VarMap, device: &Device) -> crate::error::Result<Box<dyn Layer>> {
+    fn compile(
+        &self,
+        _input_shape: &Shape,
+        _variables: &VarMap,
+        _device: &Device,
+    ) -> crate::error::Result<Box<dyn Layer>> {
         Ok(Box::new(ActivationLayer::new(self.activation)))
     }
 
@@ -32,14 +39,12 @@ impl LayerConfiguration for Activation {
 }
 
 pub struct ActivationLayer {
-    activation: candle_nn::Activation
+    activation: candle_nn::Activation,
 }
 
 impl ActivationLayer {
     fn new(activation: candle_nn::Activation) -> Self {
-        ActivationLayer {
-            activation
-        }
+        ActivationLayer { activation }
     }
 }
 
