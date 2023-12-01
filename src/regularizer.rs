@@ -1,5 +1,3 @@
-
-
 use candle_core::{Module, Tensor};
 
 #[derive(Debug, Clone, Copy, PartialEq)]

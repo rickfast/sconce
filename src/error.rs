@@ -13,7 +13,7 @@ pub enum Error {
     #[error("model architecture must contain at least one layer")]
     EmptyModelArchitecture,
     #[error("model architecture does not include input shape")]
-    InputShapeNotFound
+    InputShapeNotFound,
 }
 
 impl From<Error> for candle_core::Error {

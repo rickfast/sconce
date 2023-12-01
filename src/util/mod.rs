@@ -1,5 +1,3 @@
-
-
 #[macro_export]
 macro_rules! builder_field {
     ($field:ident, $field_type:ty) => {

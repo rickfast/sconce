@@ -11,16 +11,16 @@ pub trait Layer: Module {
 }
 
 pub trait LayerBuilder {
-    fn build(
-        &mut self
-    ) -> Self;
+    fn build(&mut self) -> Self;
 }
 
 pub trait LayerConfiguration {
-    fn compile(&self,
-               input_shape: &Shape,
-               variables: &VarMap,
-               device: &Device) -> Result<Box<dyn Layer>>;
+    fn compile(
+        &self,
+        input_shape: &Shape,
+        variables: &VarMap,
+        device: &Device,
+    ) -> Result<Box<dyn Layer>>;
 
     fn input_shape(&self) -> Option<Shape> {
         None

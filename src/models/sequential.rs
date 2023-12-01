@@ -1,6 +1,6 @@
 use crate::error::Result;
 use crate::layers::dense::Dense;
-use crate::layers::{Layer, LayerConfiguration, LayerBuilder};
+use crate::layers::{Layer, LayerBuilder, LayerConfiguration};
 use crate::loss::LossFn;
 use crate::models::{Model, ModelBuilder};
 use crate::optimizer::{Optimizer, OptimizerBuilder, Optimizers};
