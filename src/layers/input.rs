@@ -7,6 +7,7 @@ use candle_nn::VarMap;
 fn input(shape: Shape, dtype: DType) -> Input {
     Input::new(shape, dtype).build()
 }
+
 #[derive(Clone)]
 pub struct Input {
     shape: Shape,
@@ -15,7 +16,7 @@ pub struct Input {
 }
 
 impl Input {
-    fn new(shape: Shape, dtype: DType) -> Self {
+    pub fn new(shape: Shape, dtype: DType) -> Self {
         Self {
             shape,
             batch_size: None,
